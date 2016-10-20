@@ -5,50 +5,55 @@
 
 using namespace std;
 using namespace stm;
+using namespace boost;
 
-class TheDecoder : public Decoder {
+class TheEvent : public Event { 
  public:
-  TheDecoder(QueuePtr queue) { }
-  virtual ~TheDecoder() { }
+  TheEvent(QueuePtr source, const string data) : Event(source), data_(data) { }
+  virtual ~TheEvent() { }
 
-  void on(const Bytes& data) {
-   queue_->enqueue(data); 
+  string data() const {
+    return data_;
   }
 
-  void onClose() {
-   cout << __func__ << endl; 
-  }
-  
-  void onTimeout() {
-   cout << __func__ << endl; 
-  }
  private:
-  QueuePtr queue_;
+  string data_;
 };
 
-class TheQueue : public Queue {
+class TheEventHandler : public EventHandler {
  public:
-  virtual ~TheQueue() { }
+  TheEventHandler(QueuePtr output) : output_(output) { }
+  virtual ~TheEventHandler() { }
 
-  void enqueue(const Bytes&) {
+  void on(const Event& data) {
+    const TheEvent& event = dynamic_cast<const TheEvent&>(data); 
+    string msg = "hello, ";
+    msg.append(event.data());
 
+    const TheEvent reply(queue_, msg); 
+
+    cout << __func__ 
+        << "(" 
+        << event.data() 
+        << ")" << endl;
+
+    queue_->enqueue(reply); 
   }
 
-  void close() {
-
-  }
-
-  void timeout() {
-
-  }
+ private:
+  QueuePtr output_;
 };
 
 int main(int argc, char* argv[]) {
-  QueuePtr queue(new TheQueue());
-  DecoderPtr decoder(new TheDecoder(queue));
+  QueuePtr decoderQueue(new TheQueue());
+  QueuePtr source(new TheQueue());
+  QueuePtr output(new TheQueue());
+  EventHandlerPtr decoder(new TheEventHandler(output));
 
-  decoder->onTimeout();
-  decoder->onClose();
+  TheEvent e(source, string("wangxy"));
+
+  decoder->on(e);
+  
   return EXIT_SUCCESS;
 }
 
