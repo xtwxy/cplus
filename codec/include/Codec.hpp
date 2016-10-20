@@ -3,34 +3,33 @@
 
 #include <ByteStream.hpp>
 
-template<typename State, typename InMessage, typename OutMessage>
+typedef boost::any State;
+
 class Encoder {
  public:
   virtual ~Encoder() { }
 
-  virtual void encode(State&, InMessage&, DownStream<OutMessage>&) = 0; 
-  virtual void onClose(State&, DownStream<OutMessage>&) = 0;
-  virtual void onTimeout(State&, DownStream<OutMessage>&) = 0;
+  virtual void encode(State& state, Message& in, DownStream& out) = 0; 
+  virtual void onClose(State& state, DownStream& out) = 0;
+  virtual void onTimeout(State& state, DownStream& out) = 0;
 };
 
-template<typename State, typename InMessage, typename OutMessage>
 class Decoder {
  public:
   virtual ~Decoder() { }
 
-  virtual void decode(State&, InMessage&, UpperStream<OutMessage>&) = 0; 
-  virtual void onClose(State&, UpperStream<OutMessage>&) = 0;
-  virtual void onTimeout(State&, UpperStream<OutMessage>&) = 0;
+  virtual void decode(State& state, Message& in, UpperStream& out) = 0; 
+  virtual void onClose(State& state, UpperStream& out) = 0;
+  virtual void onTimeout(State& state, UpperStream& out) = 0;
 };
 
-template<typename State, typename Message>
 class MessageHandler {
  public:
   virtual ~MessageHandler() { }
 
-  virtual void onMessage(State&, Message&) = 0;
-  virtual void onClose(State&, UpperStream<Message>&) = 0;
-  virtual void onTimeout(State&, UpperStream<Message>&) = 0;
+  virtual void onMessage(State& state, Message& msg, UpperStream& out) = 0;
+  virtual void onClose(State& state, UpperStream& out) = 0;
+  virtual void onTimeout(State& state, UpperStream& out) = 0;
 };
 
 #endif //defined _CODEC_CODEC_HPP_

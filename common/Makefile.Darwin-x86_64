@@ -3,7 +3,7 @@ OBJECTS = $(subst .cpp,.o,$(SOURCES))
 INCLUDE += -I/usr/include -I/usr/local/include \
 	-I/Users/wangxy/wincom/binaries/boost_1_59_0/include
 
-LIB += -L/usr/lib -L/usr/local/lib -lboost_system -L/Users/wangxy/wincom/binaries/boost_1_59_0/lib
+LIB += -L/usr/lib -L/usr/local/lib -L/Users/wangxy/wincom/binaries/boost_1_59_0/lib
 
 
 CXX_FLAGS += -O3 #-pg

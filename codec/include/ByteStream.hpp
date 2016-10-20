@@ -4,8 +4,10 @@
 #include <boost/asio.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/function.hpp>
+#include <boost/any.hpp>
 
-template<typename Message>
+typedef boost::any Message;
+
 class UpperStream {
  public:
   virtual ~UpperStream() { }
@@ -16,8 +18,6 @@ class UpperStream {
 
 };
 
-
-template<typename Message>
 class DownStream {
  public:
   virtual ~DownStream() { }
@@ -27,7 +27,6 @@ class DownStream {
   virtual void onTimeout() = 0;
 
 };
-
 
 class ByteStream {
  public:
