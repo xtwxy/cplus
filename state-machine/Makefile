@@ -3,6 +3,7 @@ include ../common/Makefile.def
 TARGET = state-machine$(EXE)
 
 SOURCES = \
+    src/Codec.cpp \
     src/main.cpp 
 
 INCLUDE += -Iinclude -I/home/pi/binary/boost/include 

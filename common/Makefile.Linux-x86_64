@@ -13,10 +13,10 @@ CXX_FLAGS += -O3 -fPIC
 	#-g2 -DBOOST_ASIO_ENABLE_HANDLER_TRACKING -std=c++0x -fvisibility=hidden
 
 GCC_PREFIX=#mips64-linux-gnu-
-CC=$(GCC_PREFIX)gcc
+CC=$(GCC_PREFIX)clang
 CLANGPP=/home/master/clang/clang+llvm-3.5.1-x86_64-fedora20/bin/clang++ -target mips
 LLVM_LINK=/home/master/clang/clang+llvm-3.5.1-x86_64-fedora20/bin/llvm-link
-CXX=$(GCC_PREFIX)g++
+CXX=$(GCC_PREFIX)clang++
 AR=$(GCC_PREFIX)ar
 AS=$(GCC_PREFIX)as
 LD=$(GCC_PREFIX)ld

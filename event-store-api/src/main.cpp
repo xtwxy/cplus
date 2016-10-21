@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <stm/Codec.h>
+#include <EventStore/EventStore.h>
 
 using namespace std;
-using namespace stm;
+using namespace EventStore;
 using namespace boost;
 
 class TheEvent : public Event {
@@ -49,7 +49,6 @@ class TheEventHandler : public EventHandler {
 };
 
 int main(int argc, char* argv[]) {
-
   EventHandlerPtr handler1(new TheEventHandler());
   EventHandlerPtr handler2(new TheEventHandler());
 
