@@ -1,8 +1,8 @@
 #include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
-#include <EventStore/BoostImpl/EventStoreBoostImpl.h>
+#include <ActorSystem/BoostImpl/ActorSystemBoostImpl.h>
 
-namespace EventStore {
+namespace ActorSystem {
 namespace BoostImpl {
 
 QueueImpl::QueueImpl(boost::asio::io_service& ios) : ios_(ios), handlers_() { }
@@ -44,11 +44,11 @@ void QueueImpl::terminate() {
   }
 }
 
-EventStoreImpl::EventStoreImpl(boost::asio::io_service& ios) : ios_(ios), queues_() { }
+ActorSystemImpl::ActorSystemImpl(boost::asio::io_service& ios) : ios_(ios), queues_() { }
 
-EventStoreImpl::~EventStoreImpl() { }
+ActorSystemImpl::~ActorSystemImpl() { }
 
-void EventStoreImpl::bind(
+void ActorSystemImpl::bind(
   std::string qname,
   EventHandlerPtr handler) {
     QueuePtr q = lookupQueue(qname);
@@ -61,11 +61,11 @@ void EventStoreImpl::bind(
     handler->bind(q);
 }
 
-void EventStoreImpl::bind(std::string qname, QueuePtr q) {
+void ActorSystemImpl::bind(std::string qname, QueuePtr q) {
     queues_.insert(std::make_pair(qname, q));
 }
 
-QueuePtr EventStoreImpl::lookupQueue(std::string qname) {
+QueuePtr ActorSystemImpl::lookupQueue(std::string qname) {
   std::map<std::string, QueuePtr>::iterator pos = queues_.find(qname);
   if(pos != queues_.end()) {
     return pos->second;
@@ -74,7 +74,7 @@ QueuePtr EventStoreImpl::lookupQueue(std::string qname) {
   }
 }
 
-void EventStoreImpl::terminate() {
+void ActorSystemImpl::terminate() {
   std::map<std::string, QueuePtr>::iterator pos = queues_.begin();
   for(; pos != queues_.end(); ++pos) {
     pos->second->terminate();
@@ -82,4 +82,4 @@ void EventStoreImpl::terminate() {
 }
 
 } // namespace BoostImpl
-} // namespace EventStore
+} // namespace ActorSystem

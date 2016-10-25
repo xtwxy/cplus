@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include <EventStore/EventStore.h>
+#include <ActorSystem/ActorSystem.h>
 
 using namespace std;
 using namespace boost;
 
-namespace EventStore {
+namespace ActorSystem {
 
 Event::Event(QueuePtr source) : source_(source) {
 }
@@ -65,8 +65,8 @@ void EventHandler::terminate() {
   outputs_.clear();
 }
 
-EventStore::EventStore() { }
+ActorSystem::ActorSystem() { }
 
-EventStore::~EventStore() { }
+ActorSystem::~ActorSystem() { }
 
-} // namespace EventStore
+} // namespace ActorSystem

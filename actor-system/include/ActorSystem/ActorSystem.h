@@ -1,5 +1,5 @@
-#ifndef _EVENT_STORE_API_H_
-#define _EVENT_STORE_API_H_
+#ifndef _ACTOR_SYSTEM_API_H_
+#define _ACTOR_SYSTEM_API_H_
 
 #include <string>
 #include <vector>
@@ -10,19 +10,19 @@
 #include <boost/noncopyable.hpp>
 #include <boost/any.hpp>
 
-namespace EventStore {
+namespace ActorSystem {
 
 class Event;
 class EventHandler;
 class Queue;
-class EventStore;
+class ActorSystem;
 class Repository;
 class Reference;
 
 typedef boost::shared_ptr<Event> EventPtr;
 typedef boost::shared_ptr<EventHandler> EventHandlerPtr;
 typedef boost::shared_ptr<Queue> QueuePtr;
-typedef boost::shared_ptr<EventStore> EventStorePtr;
+typedef boost::shared_ptr<ActorSystem> ActorSystemPtr;
 typedef boost::shared_ptr<Repository> RepositoryPtr;
 
 class Event {
@@ -88,13 +88,13 @@ class EventHandler :
 
 };
 
-class EventStore :
-    public boost::enable_shared_from_this<EventStore>,
+class ActorSystem :
+    public boost::enable_shared_from_this<ActorSystem>,
     private boost::noncopyable
 {
 public:
-  EventStore();
-  virtual ~EventStore();
+  ActorSystem();
+  virtual ~ActorSystem();
 
   virtual void bind(std::string qname, EventHandlerPtr handler) = 0;
   virtual void bind(std::string qname, QueuePtr q) = 0;
@@ -117,4 +117,4 @@ public:
 
 } // namespace stm
 
-#endif //_EVENT_STORE_API_H_
+#endif //_ACTOR_SYSTEM_API_H_

@@ -1,10 +1,10 @@
 include ../common/Makefile.def
 
-TARGET = event-store-api$(EXE)
+TARGET = actor-system$(EXE)
 
 SOURCES = \
-    src/EventStore/EventStore.cpp \
-    src/EventStore/BoostImpl/EventStoreBoostImpl.cpp \
+    src/ActorSystem/ActorSystem.cpp \
+    src/ActorSystem/BoostImpl/ActorSystemBoostImpl.cpp \
     src/main.cpp
 
 INCLUDE += -Iinclude -I/home/pi/binary/boost/include

@@ -3,12 +3,12 @@
 #include <iomanip>
 
 #include <boost/lexical_cast.hpp>
-#include <EventStore/EventStore.h>
-#include <EventStore/BoostImpl/EventStoreBoostImpl.h>
+#include <ActorSystem/ActorSystem.h>
+#include <ActorSystem/BoostImpl/ActorSystemBoostImpl.h>
 
 using namespace std;
-using namespace EventStore;
-using namespace ::EventStore::BoostImpl;
+using namespace ActorSystem;
+using namespace ::ActorSystem::BoostImpl;
 using namespace boost;
 
 class TheEvent : public Event {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
   EventHandlerPtr handler1(new TheEventHandler(count));
   EventHandlerPtr handler2(new TheEventHandler(count));
 
-  EventStorePtr store(new EventStoreImpl(ios));
+  ActorSystemPtr store(new ActorSystemImpl(ios));
   store->bind("handler1", handler1);
   store->bind("handler2", handler2);
   TheEventPtr e(new TheEvent(handler1->bind(), msg));

@@ -1,15 +1,15 @@
-#ifndef _EVENT_STORE_BOOST_IMPL_H
-#define _EVENT_STORE_BOOST_IMPL_H
+#ifndef _ACTOR_SYSTEM_BOOST_IMPL_H
+#define _ACTOR_SYSTEM_BOOST_IMPL_H
 
 #include <list>
 #include <map>
 #include <boost/asio.hpp>
-#include <EventStore/EventStore.h>
+#include <ActorSystem/ActorSystem.h>
 
-namespace EventStore {
+namespace ActorSystem {
 namespace BoostImpl {
 
-class QueueImpl : public ::EventStore::Queue {
+class QueueImpl : public ::ActorSystem::Queue {
  public:
   QueueImpl(boost::asio::io_service&);
   virtual ~QueueImpl();
@@ -25,10 +25,10 @@ private:
   std::list<EventHandlerPtr> handlers_;
 };
 
-class EventStoreImpl : public ::EventStore::EventStore {
+class ActorSystemImpl : public ::ActorSystem::ActorSystem {
 public:
-  EventStoreImpl(boost::asio::io_service&);
-  virtual ~EventStoreImpl();
+  ActorSystemImpl(boost::asio::io_service&);
+  virtual ~ActorSystemImpl();
 
   void bind(std::string qname, EventHandlerPtr handler);
   void bind(std::string qname, QueuePtr q);
@@ -41,5 +41,5 @@ private:
 };
 
 } // namespace BoostImpl
-} // namespace EventStore
-#endif //_EVENT_STORE_BOOST_IMPL_H
+} // namespace ActorSystem
+#endif //_ACTOR_SYSTEM_BOOST_IMPL_H
