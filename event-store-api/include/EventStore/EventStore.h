@@ -2,6 +2,7 @@
 #define _EVENT_STORE_API_H_
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include <boost/shared_ptr.hpp>
@@ -11,12 +12,14 @@
 
 namespace EventStore {
 
+class Event;
 class EventHandler;
 class Queue;
 class EventStore;
 class Repository;
 class Reference;
 
+typedef boost::shared_ptr<Event> EventPtr;
 typedef boost::shared_ptr<EventHandler> EventHandlerPtr;
 typedef boost::shared_ptr<Queue> QueuePtr;
 typedef boost::shared_ptr<EventStore> EventStorePtr;
@@ -40,8 +43,11 @@ class Queue :
   Queue();
   virtual ~Queue();
 
-  virtual void enqueue(const Event& e) = 0;
+  virtual void send(const EventPtr e) = 0;
+  virtual void post(const EventPtr e) = 0;
   virtual void add(EventHandlerPtr handler) = 0;
+  
+  virtual void terminate() = 0;
 };
 
 struct Reference {
@@ -60,17 +66,19 @@ class EventHandler :
   EventHandler();
   virtual ~EventHandler();
 
-  virtual void on(const Event&) = 0;
+  virtual void on(const EventPtr) = 0;
 
   QueuePtr self() const;
   QueuePtr bind() const;
   void bind(QueuePtr);
-  virtual std::vector<Reference> references() const = 0;
-  virtual void reference(std::string name, QueuePtr) = 0;
-  virtual void reference(std::string name, RepositoryPtr) = 0;
+  virtual const std::vector<std::string> references() const;
+  virtual void reference(std::string name, QueuePtr);
 
+  virtual void terminate() = 0;
  private:
   QueuePtr bind_;
+  std::map<std::string, QueuePtr> outputs_;
+
 };
 
 class EventStore :
@@ -81,9 +89,11 @@ public:
   EventStore();
   virtual ~EventStore();
 
-  virtual void bindHandler(std::string qname, EventHandlerPtr handler) = 0;
-  virtual void registerQueue(std::string qname, QueuePtr q) = 0;
+  virtual void bind(std::string qname, EventHandlerPtr handler) = 0;
+  virtual void bind(std::string qname, QueuePtr q) = 0;
   virtual QueuePtr lookupQueue(std::string qname) = 0;
+  
+  virtual void terminate() = 0;
 };
 
 class Repository :
@@ -91,8 +101,8 @@ class Repository :
     private boost::noncopyable
 {
 public:
-  StateRepository();
-  virtual ~StateRepository();
+  Repository();
+  virtual ~Repository();
 
   virtual void registerQueue(std::string qname, QueuePtr q) = 0;
   virtual QueuePtr lookupQueue(std::string qname) = 0;

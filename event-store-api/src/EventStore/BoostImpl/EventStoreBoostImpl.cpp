@@ -1,17 +1,25 @@
 #include <boost/make_shared.hpp>
+#include <boost/bind.hpp>
 #include <EventStore/BoostImpl/EventStoreBoostImpl.h>
 
 namespace EventStore {
 namespace BoostImpl {
 
-QueueImpl::QueueImpl() : handlers_() { }
+QueueImpl::QueueImpl(boost::asio::io_service& ios) : ios_(ios), handlers_() { }
 
 QueueImpl::~QueueImpl() { }
 
-void QueueImpl::enqueue(const Event& e) {
+void QueueImpl::send(const EventPtr e) {
   for(std::list<EventHandlerPtr>::iterator it = handlers_.begin();
       it != handlers_.end(); ++it) {
     (*it)->on(e);
+  }
+}
+
+void QueueImpl::post(const EventPtr e) {
+  for(std::list<EventHandlerPtr>::iterator it = handlers_.begin();
+      it != handlers_.end(); ++it) {
+    ios_.post(boost::bind(&EventHandler::on, (*it), e));
   }
 }
 
@@ -19,22 +27,30 @@ void QueueImpl::add(EventHandlerPtr handler) {
   handlers_.push_back(handler);
 }
 
-EventStoreImpl::EventStoreImpl() : queues_() { }
+void QueueImpl::terminate() {
+  for(std::list<EventHandlerPtr>::iterator it = handlers_.begin();
+      it != handlers_.end(); ++it) {
+    (*it)->terminate();
+  }
+}
+
+EventStoreImpl::EventStoreImpl(boost::asio::io_service& ios) : ios_(ios), queues_() { }
 
 EventStoreImpl::~EventStoreImpl() { }
 
-void EventStoreImpl::registerHandler(
+void EventStoreImpl::bind(
   std::string qname,
   EventHandlerPtr handler) {
     QueuePtr q = lookupQueue(qname);
     if(!q) {
-      q = boost::make_shared<QueueImpl>();
+      q.reset(new QueueImpl(ios_));
       queues_.insert(std::make_pair(qname, q));
     }
     q->add(handler);
+    handler->bind(q);
 }
 
-void EventStoreImpl::registerQueue(std::string qname, QueuePtr q) {
+void EventStoreImpl::bind(std::string qname, QueuePtr q) {
     queues_.insert(std::make_pair(qname, q));
 }
 
@@ -44,6 +60,13 @@ QueuePtr EventStoreImpl::lookupQueue(std::string qname) {
     return pos->second;
   } else {
     return QueuePtr();
+  }
+}
+
+void EventStoreImpl::terminate() {
+  std::map<std::string, QueuePtr>::iterator pos = queues_.begin();
+  for(; pos != queues_.end(); ++pos) {
+    pos->second->terminate();
   }
 }
 
