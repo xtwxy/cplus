@@ -37,7 +37,7 @@ class TheEventHandler : public EventHandler {
     string ping = "ping";
     string pong = "pong";
 
-    cout << hex << showbase << internal << setw(16) << setfill('0')
+    cout //<< hex << showbase << internal << setw(16) << setfill('0')
     	<< this
     	<< ": ["
 		<< count_
@@ -46,9 +46,9 @@ class TheEventHandler : public EventHandler {
 		<< name()
     	<< "::"
         << __func__
-        << "("
+        << "(\""
         << event->data()
-        << ")" << endl;
+        << "\")" << endl;
 
     if(ping == event->data()) {
       const TheEventPtr reply(new TheEvent(self(), pong));
