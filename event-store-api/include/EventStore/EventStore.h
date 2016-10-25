@@ -78,8 +78,9 @@ class EventHandler :
   virtual const std::vector<std::string> references() const;
   virtual void reference(std::string name, QueuePtr);
 
-  virtual void stop() = 0;
   void terminate();
+ protected:
+  virtual void stop() = 0;
  private:
   std::string name_;
   QueuePtr bind_;

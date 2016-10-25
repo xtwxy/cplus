@@ -64,6 +64,7 @@ class TheEventHandler : public EventHandler {
     }
   }
 
+ protected:
   void stop() {
   }
  private:
