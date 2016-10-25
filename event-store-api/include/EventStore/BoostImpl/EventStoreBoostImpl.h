@@ -24,7 +24,7 @@ public:
   EventStoreImpl();
   virtual ~EventStoreImpl();
 
-  void registerHandler(std::string qname, EventHandlerPtr handler);
+  void bindHandler(std::string qname, EventHandlerPtr handler);
   void registerQueue(std::string qname, QueuePtr q);
   QueuePtr lookupQueue(std::string qname);
 

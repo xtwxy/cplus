@@ -14,12 +14,13 @@ namespace EventStore {
 class EventHandler;
 class Queue;
 class EventStore;
-class StateRepository;
+class Repository;
+class Reference;
 
 typedef boost::shared_ptr<EventHandler> EventHandlerPtr;
 typedef boost::shared_ptr<Queue> QueuePtr;
 typedef boost::shared_ptr<EventStore> EventStorePtr;
-typedef boost::shared_ptr<StateRepository> StateRepositoryPtr;
+typedef boost::shared_ptr<Repository> RepositoryPtr;
 
 class Event {
  public:
@@ -43,6 +44,12 @@ class Queue :
   virtual void add(EventHandlerPtr handler) = 0;
 };
 
+struct Reference {
+public:
+  std::string name;
+  std::string type;
+};
+
 class EventHandler :
     public boost::enable_shared_from_this<EventHandler>,
     private boost::noncopyable
@@ -53,14 +60,17 @@ class EventHandler :
   EventHandler();
   virtual ~EventHandler();
 
-  virtual void init(EventStorePtr, StateStorePtr, const InitParams&);
   virtual void on(const Event&) = 0;
 
-  QueuePtr source() const;
-  void source(QueuePtr);
+  QueuePtr self() const;
+  QueuePtr bind() const;
+  void bind(QueuePtr);
+  virtual std::vector<Reference> references() const = 0;
+  virtual void reference(std::string name, QueuePtr) = 0;
+  virtual void reference(std::string name, RepositoryPtr) = 0;
 
  private:
-  QueuePtr source_;
+  QueuePtr bind_;
 };
 
 class EventStore :
@@ -71,13 +81,13 @@ public:
   EventStore();
   virtual ~EventStore();
 
-  virtual void registerHandler(std::string qname, EventHandlerPtr handler) = 0;
+  virtual void bindHandler(std::string qname, EventHandlerPtr handler) = 0;
   virtual void registerQueue(std::string qname, QueuePtr q) = 0;
   virtual QueuePtr lookupQueue(std::string qname) = 0;
 };
 
-class StateRepository :
-    public boost::enable_shared_from_this<StateRepository>,
+class Repository :
+    public boost::enable_shared_from_this<Repository>,
     private boost::noncopyable
 {
 public:
