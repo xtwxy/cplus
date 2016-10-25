@@ -52,6 +52,7 @@ void EventHandler::reference(std::string name, QueuePtr q) {
 }
 
 void EventHandler::terminate() {
+  bind_->remove(shared_from_this());
   bind_.reset();
   outputs_.clear();
 }

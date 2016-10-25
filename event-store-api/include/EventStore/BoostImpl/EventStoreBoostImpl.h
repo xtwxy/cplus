@@ -17,6 +17,8 @@ class QueueImpl : public ::EventStore::Queue {
   void send(const EventPtr e);
   void post(const EventPtr e);
   void add(EventHandlerPtr handler);
+  void remove(EventHandlerPtr handler);
+
   void terminate();
 private:
   boost::asio::io_service& ios_;

@@ -46,6 +46,7 @@ class Queue :
   virtual void send(const EventPtr e) = 0;
   virtual void post(const EventPtr e) = 0;
   virtual void add(EventHandlerPtr handler) = 0;
+  virtual void remove(EventHandlerPtr handler) = 0;
   
   virtual void terminate() = 0;
 };
@@ -74,7 +75,8 @@ class EventHandler :
   virtual const std::vector<std::string> references() const;
   virtual void reference(std::string name, QueuePtr);
 
-  virtual void terminate() = 0;
+  virtual void stop() = 0;
+  void terminate();
  private:
   QueuePtr bind_;
   std::map<std::string, QueuePtr> outputs_;

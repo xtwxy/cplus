@@ -27,6 +27,16 @@ void QueueImpl::add(EventHandlerPtr handler) {
   handlers_.push_back(handler);
 }
 
+void QueueImpl::remove(EventHandlerPtr handler) {
+  for(std::list<EventHandlerPtr>::iterator it = handlers_.begin();
+      it != handlers_.end(); ++it) {
+	  if(handler == (*it)) {
+		  handlers_.remove(handler);
+		  return;
+	  }
+  }
+}
+
 void QueueImpl::terminate() {
   for(std::list<EventHandlerPtr>::iterator it = handlers_.begin();
       it != handlers_.end(); ++it) {

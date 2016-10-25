@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <boost/lexical_cast.hpp>
 #include <EventStore/EventStore.h>
 #include <EventStore/BoostImpl/EventStoreBoostImpl.h>
 
@@ -31,22 +32,20 @@ class TheEventHandler : public EventHandler {
 
   void on(const EventPtr e) {
     count_ -= 1;
-    if(count_ == 0) {
-      terminate();
-      return;
-    }
     const TheEventPtr event = boost::dynamic_pointer_cast<TheEvent>(e);
     string ping = "ping";
     string pong = "pong";
 
-    /*
     cout << this
+    	<< "["
+		<< count_
+		<< "]"
         << ": "
         << __func__
         << "("
         << event->data()
         << ")" << endl;
-    */
+
     if(ping == event->data()) {
       const TheEventPtr reply(new TheEvent(self(), pong));
       e->source()->post(reply);
@@ -55,10 +54,13 @@ class TheEventHandler : public EventHandler {
       const TheEventPtr reply(new TheEvent(self(), event->data()));
       e->source()->post(reply);
     }
+    if(count_ == 0) {
+      terminate();
+      return;
+    }
   }
 
-  void terminate() {
-    EventHandler::terminate();
+  void stop() {
   }
  private:
   std::size_t count_;
@@ -67,16 +69,20 @@ class TheEventHandler : public EventHandler {
 int main(int argc, char* argv[]) {
   boost::asio::io_service ios;
 
-  EventHandlerPtr handler1(new TheEventHandler());
-  EventHandlerPtr handler2(new TheEventHandler());
-
-  EventStorePtr store(new EventStoreImpl(ios));
-  store->bind("handler1", handler1);
-  store->bind("handler2", handler2);
+  std::size_t count = 10;
   string msg = "ping";
   if(argc > 1) {
     msg = argv[1];
   }
+  if(argc > 2) {
+	 count = boost::lexical_cast<std::size_t>(argv[2]);
+  }
+  EventHandlerPtr handler1(new TheEventHandler(count));
+  EventHandlerPtr handler2(new TheEventHandler(count));
+
+  EventStorePtr store(new EventStoreImpl(ios));
+  store->bind("handler1", handler1);
+  store->bind("handler2", handler2);
   TheEventPtr e(new TheEvent(handler1->bind(), msg));
   handler2->bind()->post(e);
 
