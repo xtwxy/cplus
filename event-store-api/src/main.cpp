@@ -91,7 +91,6 @@ int main(int argc, char* argv[]) {
   TheEventPtr e(new TheEvent(handler1->bind(), msg));
   handler2->bind()->post(e);
 
-  //handler2->on(e);
   ios.run();
 
   return EXIT_SUCCESS;
