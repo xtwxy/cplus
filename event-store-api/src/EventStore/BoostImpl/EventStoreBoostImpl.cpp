@@ -57,6 +57,7 @@ void EventStoreImpl::bind(
       queues_.insert(std::make_pair(qname, q));
     }
     q->add(handler);
+    handler->name(qname);
     handler->bind(q);
 }
 

@@ -21,10 +21,18 @@ Queue::Queue() { }
 
 Queue::~Queue() { }
 
-EventHandler::EventHandler() : bind_() {
+EventHandler::EventHandler() : name_(), bind_(), outputs_() {
 }
 
 EventHandler::~EventHandler() { }
+
+void EventHandler::name(const std::string name) {
+	name_ = name;
+}
+
+const std::string EventHandler::name() const {
+	return name_;
+}
 
 QueuePtr EventHandler::self() const {
   return bind_;

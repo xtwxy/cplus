@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 
 #include <boost/lexical_cast.hpp>
 #include <EventStore/EventStore.h>
@@ -27,7 +28,7 @@ typedef boost::shared_ptr<TheEvent> TheEventPtr;
 
 class TheEventHandler : public EventHandler {
  public:
-  TheEventHandler(std::size_t count = 10000000) :count_(count) { }
+  TheEventHandler(std::size_t count = 1) :count_(count) { }
   virtual ~TheEventHandler() { }
 
   void on(const EventPtr e) {
@@ -36,11 +37,14 @@ class TheEventHandler : public EventHandler {
     string ping = "ping";
     string pong = "pong";
 
-    cout << this
-    	<< "["
+    cout << hex << showbase << internal << setw(16) << setfill('0')
+    	<< this
+    	<< ": ["
 		<< count_
 		<< "]"
         << ": "
+		<< name()
+    	<< "::"
         << __func__
         << "("
         << event->data()
@@ -69,7 +73,7 @@ class TheEventHandler : public EventHandler {
 int main(int argc, char* argv[]) {
   boost::asio::io_service ios;
 
-  std::size_t count = 10;
+  std::size_t count = 1;
   string msg = "ping";
   if(argc > 1) {
     msg = argv[1];

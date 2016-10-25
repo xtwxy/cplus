@@ -69,6 +69,9 @@ class EventHandler :
 
   virtual void on(const EventPtr) = 0;
 
+  void name(const std::string name);
+  const std::string name() const;
+
   QueuePtr self() const;
   QueuePtr bind() const;
   void bind(QueuePtr);
@@ -78,6 +81,7 @@ class EventHandler :
   virtual void stop() = 0;
   void terminate();
  private:
+  std::string name_;
   QueuePtr bind_;
   std::map<std::string, QueuePtr> outputs_;
 
