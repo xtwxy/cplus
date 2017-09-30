@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PRINTF(format, ... )  
+#ifdef NOPRINT
+  #define PRINTF(format, ... )
+#else
+  #define PRINTF printf
+#endif
 
 struct shared_queue {
     pthread_mutex_t lock;
@@ -37,10 +41,10 @@ void* producer_thread(void *p) {
     shared_queue *q = (shared_queue *)p;
     for(; q->produced != q->max_count; ) {
         pthread_mutex_lock(&(q->lock));
-        PRINTF("producer(produced, consumed) => (%lu, %lu)\n", q->produced, q->consumed);
         if((q->produced - q->consumed) < q->capacity) {
             q->produced++;
             PRINTF("produced: %lu\n", q->produced);
+            PRINTF("producer(produced, consumed) => (%lu, %lu)\n", q->produced, q->consumed);
             pthread_cond_signal(&(q->empty));
         } else {
             PRINTF("full: wait for consuming.\n");
@@ -55,10 +59,10 @@ void* consumer_thread(void *p) {
     shared_queue *q = (shared_queue *)p;
     for(; q->consumed != q->max_count; ) {
         pthread_mutex_lock(&(q->lock));
-        PRINTF("consumer(produced, consumed) => (%lu, %lu)\n", q->produced, q->consumed);
         if(q->produced != q->consumed) {
             q->consumed++;
             PRINTF("consumed: %lu\n", q->consumed);
+            PRINTF("consumer(produced, consumed) => (%lu, %lu)\n", q->produced, q->consumed);
             pthread_cond_signal(&(q->full));
         } else {
             PRINTF("empty: wait for producing.\n");
