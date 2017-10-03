@@ -11,7 +11,8 @@ int main(int argc, char* argv[]) {
   int status;
   
   if(argc != 4) {
-    printf("Usage:\n%s \"<cmd line>\"\n", argv[1]);
+    printf("Usage:\n%s <cmd and its params>\n", argv[1]);
+    return EXIT_FAILURE;
   }
 
   if((pid = fork()) < 0) { // error.
