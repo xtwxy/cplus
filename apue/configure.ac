@@ -26,6 +26,7 @@ AC_CONFIG_FILES([
     Makefile
     include/Makefile
     signal_alarm/Makefile
+    producer_consumer/Makefile
     pkginfo/Makefile
 ])
 
