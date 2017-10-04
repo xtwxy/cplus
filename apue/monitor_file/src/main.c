@@ -42,47 +42,29 @@ int readfd(int fd) {
 }
 
 int main(int argc, char* argv[]) {
-  int fd;
   int nfds;
   fd_set rfds;
   struct timeval tv;
   int retval;
 
-  if(argc != 2) {
-    printf("Usage:\n%s <file monitor>\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  fd = open_nonblock(argv[1], O_RDONLY);
-  if(fd == -1) {
-    perror("open_nonblock");
-    return EXIT_FAILURE;
-  }
-
   while(1) {
     FD_ZERO(&rfds);
     FD_SET(0, &rfds);
-    FD_SET(fd, &rfds);
 
     tv.tv_sec = 5;
     tv.tv_usec = 0;
 
-    retval = select(2, &rfds, NULL, NULL, &tv);
+    retval = select(1, &rfds, NULL, NULL, &tv);
     if(retval == -1) {
       perror("select");
-      close(fd);
       return EXIT_FAILURE;
     } else if(retval) {
       if(FD_ISSET(0, &rfds)) {
 	readfd(0);
       }
-      if(FD_ISSET(fd, &rfds)) {
-	readfd(fd);
-      }
     } else {
       printf("No data is ready for read in 5 secs.\n");
     }
   }
-  close(fd);
   return EXIT_SUCCESS;
 }
