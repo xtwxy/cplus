@@ -1,0 +1,2 @@
+fd to ordinary file cannot be selected.
+and cannot be epolled too.
