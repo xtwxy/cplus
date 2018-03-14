@@ -1,6 +1,6 @@
 include ../common/Makefile.def
 
-TARGET = serial-port-read$(EXE)
+TARGET = dtsd3366m-4-w1-test$(EXE)
 
 SOURCES = \
     src/main.cpp
