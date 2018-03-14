@@ -44,3 +44,7 @@ m4
 missing
 dist
 build
+
+.project
+.cproject
+.settings/
