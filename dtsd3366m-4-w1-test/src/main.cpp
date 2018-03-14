@@ -31,13 +31,7 @@ public:
 	  ioservice, boost::posix_time::milliseconds (TIMEOUT_MILLISECONDS))
   {
     memcpy (dataToWrite, bytes, length);
-    cerr << "lengthToWrite: " << lengthToWrite << endl;
-    for (size_t i = 0; i < lengthToWrite; i++)
-      {
-	cerr << hex << setw (2) << setfill ('0') << right
-	    << unsigned (0xff & dataToWrite[i]) << " ";
-      }
-    cerr << endl;
+
     serial_port::baud_rate rate (baudRate);
     serial_port::parity theParity (parity);
     serial_port::character_size charSize (dataBits);
@@ -61,7 +55,8 @@ public:
     if (!error)
       {
 	timer.cancel ();
-	timer.expires_from_now(boost::posix_time::milliseconds (TIMEOUT_MILLISECONDS));
+	timer.expires_from_now (
+	    boost::posix_time::milliseconds (TIMEOUT_MILLISECONDS));
 	timer.async_wait (
 	    boost::bind (&SerialPortReader::printReceived, this,
 			 boost::asio::placeholders::error));
@@ -96,6 +91,13 @@ public:
 	  }
 	else
 	  {
+	    cerr << "bytes written: " << lengthToWrite << endl;
+	    for (size_t i = 0; i < lengthToWrite; i++)
+	      {
+		cerr << hex << setw (2) << setfill ('0') << right
+		    << unsigned (0xff & dataToWrite[i]) << " ";
+	      }
+	    cerr << endl;
 	    port.async_read_some (
 		buffer (dataToRead, BUFFER_SIZE),
 		boost::bind (&SerialPortReader::read_complete, this,
@@ -114,7 +116,7 @@ public:
   {
     if (!e)
       {
-	cerr << "bytes_transferred: " << lengthRead << endl;
+	cerr << "bytes received: " << lengthRead << endl;
 	for (size_t i = 0; i < lengthRead; i++)
 	  {
 	    cerr << hex << setw (2) << setfill ('0') << right
@@ -128,7 +130,8 @@ public:
   void
   start ()
   {
-    timer.expires_from_now(boost::posix_time::milliseconds (TIMEOUT_MILLISECONDS));
+    timer.expires_from_now (
+	boost::posix_time::milliseconds (TIMEOUT_MILLISECONDS));
     timer.async_wait (
 	boost::bind (&SerialPortReader::printReceived, this,
 		     boost::asio::placeholders::error));
