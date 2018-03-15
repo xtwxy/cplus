@@ -22,7 +22,7 @@ class SerialPortReader
 {
 public:
   explicit
-  SerialPortReader (const string& portName, const int baudRate,
+  SerialPortReader (io_service& ioservice, const string& portName, const int baudRate,
 		    serial_port::parity::type parity, int dataBits,
 		    serial_port::stop_bits::type stopBits, char* bytes,
 		    size_t length) :
@@ -184,7 +184,7 @@ main (int argc, char* argv[])
 
   char bytesToWrite[256];
   transform (argv + 2, argv + argc, bytesToWrite, parse_from_hex_str);
-  SerialPortReader reader (argv[1], 9600, serial_port::parity::even, 8,
+  SerialPortReader reader (ioservice, argv[1], 9600, serial_port::parity::even, 8,
 			   serial_port::stop_bits::one, bytesToWrite, argc - 2);
 
   reader.start ();
